@@ -1,0 +1,1 @@
+python3 pytest -s -x /var/www/html/${TESTS_TARGET:-/tests/api/casos_de_teste}
