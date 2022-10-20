@@ -3,11 +3,11 @@ from pathlib import Path
 
 from write import write
 
-from tests.util.json_util import JsonUtil
-from tests.util import backup_util
-from tests.util.enum_http_method import HTTPMethod
-from tests.util.requests_util import RequestsUtil
-from tests.util.tcase_util import TCaseUtil
+from _tests.util.json_util import JsonUtil
+from _tests.util import backup_util
+from _tests.util.enum_http_method import HTTPMethod
+from _tests.util.requests_util import RequestsUtil
+from _tests.util.tcase_util import TCaseUtil
 
 
 def delete_all_files_in_folder(folder: Path):
@@ -110,7 +110,7 @@ class TCaseTools:
             elif HTTPMethod.GET == http_method:
                 saida = RequestsUtil.get(test_util.endpoint, params=dict_entrada_ou_parametros_get)
             elif HTTPMethod.PUT == http_method:
-                saida = RequestsUtil.put(test_util.endpoint, params=dict_entrada_ou_parametros_get)
+                saida = RequestsUtil.put(test_util.endpoint, data=dict_entrada_ou_parametros_get)
             elif HTTPMethod.DELETE == http_method:
                 saida = RequestsUtil.delete(test_util.endpoint, params=dict_entrada_ou_parametros_get)
 
@@ -121,17 +121,12 @@ class TCaseTools:
 if __name__ == '__main__':
     TCaseTools.criar_caso_teste_padrao(
         1,
-        "recurso",
+        "recursos/c54cca2c-1468-4eb1-88a0-b16d891985bb",
         "1234",
-        HTTPMethod.POST,
-        201,
+        HTTPMethod.DELETE,
+        204,
         "exemplo1",
-        JsonUtil().decode("""{
-            "codigo": "15",
-            "descricao": "teste3",
-            "tipo": "posto_de_trabalho",
-            "tenant": 1
-        }"""),
+        JsonUtil().decode(""""""),
         True,
         True
     )

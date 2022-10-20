@@ -60,6 +60,11 @@ class TCaseUtil:
         elif HTTPMethod.GET == http_method:
             retorno = RequestsUtil.get(
                 self.endpoint, params=body, param_mode=param_mode)
+        elif HTTPMethod.DELETE == http_method:
+            retorno = RequestsUtil.delete(
+                self.endpoint, params=body, param_mode=param_mode)
+        elif HTTPMethod.PUT == http_method:
+            retorno = RequestsUtil.put(self.endpoint, data=body)
         else:
             retorno = None
         AssertUtil.assert_status_code(retorno, status_esperado)
