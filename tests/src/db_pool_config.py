@@ -1,8 +1,8 @@
-from nasajon.settings import DATABASE_HOST
-from nasajon.settings import DATABASE_PASS
-from nasajon.settings import DATABASE_PORT
-from nasajon.settings import DATABASE_NAME
-from nasajon.settings import DATABASE_USER
+from src.settings import DATABASE_HOST
+from src.settings import DATABASE_PASS
+from src.settings import DATABASE_PORT
+from src.settings import DATABASE_NAME
+from src.settings import DATABASE_USER
 
 import sqlalchemy
 

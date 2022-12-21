@@ -1,0 +1,9 @@
+import os
+
+APP_NAME = os.environ['APP_NAME']
+
+DATABASE_HOST = os.environ['DATABASE_HOST']
+DATABASE_PASS = os.environ['DATABASE_PASS']
+DATABASE_PORT = os.environ['DATABASE_PORT']
+DATABASE_NAME = os.environ['DATABASE_NAME']
+DATABASE_USER = os.environ['DATABASE_USER']

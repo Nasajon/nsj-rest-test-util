@@ -3,11 +3,11 @@ from pathlib import Path
 
 from write import write
 
-from _tests.util.json_util import JsonUtil
-from _tests.util import backup_util
-from _tests.util.enum_http_method import HTTPMethod
-from _tests.util.requests_util import RequestsUtil
-from _tests.util.tcase_util import TCaseUtil
+from tests.util.json_util import JsonUtil
+from tests.util import backup_util
+from tests.util.enum_http_method import HTTPMethod
+from tests.util.requests_util import RequestsUtil
+from tests.util.tcase_util import TCaseUtil
 
 
 def delete_all_files_in_folder(folder: Path):
