@@ -1,12 +1,11 @@
 import os
 
-from tests.src.factory.util_factory import TestesFactory
-from tests.util.assert_util import AssertUtil
-from tests.util.dump_util import DumpUtil
-from tests.util.enum_http_method import HTTPMethod
-from tests.util.enum_param_mode import ParamMode
-from tests.util.requests_util import RequestsUtil
-from tests.util.validate_util import ValidateUtil
+from nsj_rest_test_util.util.assert_util import AssertUtil
+from nsj_rest_test_util.util.dump_util import DumpUtil
+from nsj_rest_test_util.util.enum_http_method import HTTPMethod
+from nsj_rest_test_util.util.enum_param_mode import ParamMode
+from nsj_rest_test_util.util.requests_util import RequestsUtil
+from nsj_rest_test_util.util.validate_util import ValidateUtil
 
 
 class TCaseUtil:
@@ -24,13 +23,17 @@ class TCaseUtil:
                 f"{self.folder_path}/entradas_json", True)
         self.url_base = os.getenv("TESTS_URL_BASE", "http://localhost")
         self.tests_tenant = os.getenv("TESTS_TENANT", "11045")
-        self.mope_code = mope_code
+        self.token_url = os.getenv('TOKEN_URL','https://auth.dev.nasajonsistemas.com.br/auth/realms/DEV/protocol/openid-connect/token')
+        self.token_user = os.getenv('TOKEN_USER')
+        self.token_password = os.getenv('TOKEN_PASSWORD')
+        self.token_client = os.getenv('TOKEN_CLIENT')
+        self.api_key = os.getenv("TESTS_API_KEY")
+        self.app_name = os.getenv('APP_NAME')
 
         self.global_sql = f"{self.dump_sql_folder_path}/global.sql"
-        self.tests_tenant = os.getenv("TESTS_TENANT", "100011045")
-        self.endpoint = f"{self.url_base}:{port}/{self.mope_code}/{endpoint}"
+        self.endpoint = f"{self.url_base}:{port}/{(self.app_name + '/') if self.app_name else ''}{(mope_code + '/') if mope_code else ''}{endpoint}"
 
-    def pre_setup(self, json_entrada_nome, executar_globals=True):
+    def pre_setup(self, json_entrada_nome, schema=None, executar_globals=True):
         print(f"\nJSON: {json_entrada_nome}", end="\t")
         entrada_sql = f"{self.folder_path}/dump_sql/{json_entrada_nome}"
         csv_folder = f"{self.folder_path}/dump_csv/{json_entrada_nome}"
@@ -41,7 +44,7 @@ class TCaseUtil:
         DumpUtil.dump_from_sqls([entrada_sql], params_tenant)
         DumpUtil.dump_csvs_from_folder(
 
-            csv_folder, {"tenant": self.tests_tenant})
+            csv_folder, {"tenant": self.tests_tenant}, schema)
 
     def pos_setup(self, json_entrada_nome=None):
         params_tenant = {"tenant": self.tests_tenant}
@@ -55,16 +58,27 @@ class TCaseUtil:
 
         body, status_esperado = DumpUtil.load_json_data_and_status_code(
             json_entrada)
+
+        headers = {}
+        if self.token_client:
+            token_body = {"client_id":self.token_client,"scope":"offline_access","grant_type":"password","username":self.token_user,"password":self.token_password}
+            token_retorno = RequestsUtil.postToken(
+                self.token_url, data=token_body, headers={'content-type':'application/x-www-form-urlencoded'})
+            headers['Authorization'] = token_retorno.json()['access_token']
+
+        if self.api_key:
+            headers = {"X-API-Key": self.api_key}
+
         if HTTPMethod.POST == http_method:
-            retorno = RequestsUtil.post(self.endpoint, data=body)
+            retorno = RequestsUtil.post(self.endpoint, data=body, headers=headers)
         elif HTTPMethod.GET == http_method:
             retorno = RequestsUtil.get(
-                self.endpoint, params=body, param_mode=param_mode)
+                self.endpoint, params=body, param_mode=param_mode, headers=headers)
         elif HTTPMethod.DELETE == http_method:
             retorno = RequestsUtil.delete(
-                self.endpoint, params=body, param_mode=param_mode)
+                self.endpoint, params=body, param_mode=param_mode, headers=headers)
         elif HTTPMethod.PUT == http_method:
-            retorno = RequestsUtil.put(self.endpoint, data=body)
+            retorno = RequestsUtil.put(self.endpoint, data=body, headers=headers)
         else:
             retorno = None
         AssertUtil.assert_status_code(retorno, status_esperado)

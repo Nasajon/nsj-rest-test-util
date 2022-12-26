@@ -5,3 +5,6 @@ __pycache__
 .env
 
 .vscode
+
+/dist
+*/nsj_rest_test_util.egg-info

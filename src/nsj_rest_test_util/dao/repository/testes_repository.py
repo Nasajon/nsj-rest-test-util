@@ -1,4 +1,4 @@
-from tests.src.repository.abstract_repository import AbstractRepository
+from nsj_rest_test_util.dao.repository.abstract_repository import AbstractRepository
 
 
 class TestesRepository(AbstractRepository):

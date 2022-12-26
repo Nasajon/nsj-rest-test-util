@@ -6,9 +6,9 @@ from typing import List
 
 import requests
 
-from tests.src.repository.testes_repository import TestesRepository
-from tests.src.factory.util_factory import TestesFactory
-from tests.util.dump_util import DumpUtil
+from nsj_rest_test_util.dao.repository.testes_repository import TestesRepository
+from nsj_rest_test_util.dao.factory.util_factory import TestesFactory
+from nsj_rest_test_util.util.dump_util import DumpUtil
 
 url_base = os.getenv("TESTS_URL_BASE", "http://localhost")
 tests_tenant = os.getenv("TESTS_TENANT", "11045")

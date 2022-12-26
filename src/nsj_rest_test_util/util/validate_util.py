@@ -1,7 +1,7 @@
 from typing import Tuple, Union
 
-from tests.util.assert_util import AssertUtil
-from tests.util.dump_util import DumpUtil
+from nsj_rest_test_util.util.assert_util import AssertUtil
+from nsj_rest_test_util.util.dump_util import DumpUtil
 
 
 class ValidateUtil():

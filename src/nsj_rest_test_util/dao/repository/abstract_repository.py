@@ -4,11 +4,11 @@ from enum import Enum
 from typing import Dict, List, Optional
 from uuid import UUID
 
-from tests.src.db_pool_config import db_pool
-from tests.util.cursor_util import CursorUtil
-from tests.util.globals_util import GlobalUtil
-from tests.util.json_util import JsonUtil
-from tests.src.exception.repetir_exception import RepetirException
+from nsj_rest_test_util.dao.db_pool_config import db_pool
+from nsj_rest_test_util.util.cursor_util import CursorUtil
+from nsj_rest_test_util.util.globals_util import GlobalUtil
+from nsj_rest_test_util.util.json_util import JsonUtil
+from nsj_rest_test_util.dao.exception.repetir_exception import RepetirException
 
 from sqlalchemy.engine.base import Connection
 

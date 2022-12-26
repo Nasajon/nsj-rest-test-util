@@ -1,7 +1,7 @@
 import os
 from uuid import uuid4
 
-from tests.util.json_util import JsonUtil
+from nsj_rest_test_util.util.json_util import JsonUtil
 
 
 class GlobalUtil:

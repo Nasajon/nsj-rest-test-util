@@ -4,7 +4,7 @@ import json
 import pathlib
 from typing import List, Tuple, Union
 
-from tests.src.factory.util_factory import TestesFactory
+from nsj_rest_test_util.dao.factory.util_factory import TestesFactory
 
 
 class DumpUtil():
@@ -18,7 +18,7 @@ class DumpUtil():
             DumpUtil.dump_sql_if_exists(file_path, file_params)
 
     @staticmethod
-    def dump_csvs_from_folder(folder_path: str, params: Union[List[dict], dict]):
+    def dump_csvs_from_folder(folder_path: str, params: Union[List[dict], dict], schema: str):
 
         files = DumpUtil.get_files_from_folder(folder_path)
 
@@ -28,7 +28,7 @@ class DumpUtil():
         for file_path, file_params in zip(files, params):
             file_name = DumpUtil.get_file_name(file_path)
             DumpUtil.dump_csv_if_exists(
-                file_path, table=file_name, params=file_params)
+                file_path, table=file_name, schema=schema, params=file_params)
 
     @staticmethod
     def dump_sql_command(sql_command: str, params: dict):
@@ -98,11 +98,13 @@ class DumpUtil():
     def dump_from_sql(file_path: str, params: dict = {}):
 
         with open(file_path, "r", encoding='utf8') as sql_file:
-            sql_command = sql_file.read()
-            DumpUtil.dump_sql_command(sql_command, params)
+            sql_command = sql_file.read().split(';')
+            for command in sql_command:
+                if command != '':
+                    DumpUtil.dump_sql_command(command, params)
 
     @staticmethod
-    def dump_from_csv(file_path: str, table: str, params: dict = {}, delimiter: str = ','):
+    def dump_from_csv(file_path: str, schema: str, table: str, params: dict = {}, delimiter: str = ','):
 
         with open(file_path, 'r', encoding='utf8') as csv_file:
 
@@ -113,7 +115,7 @@ class DumpUtil():
             table_columns = (', ').join(columns)
             table_values = (', ').join([f":{col}" for col in columns])
 
-            sql_command = f"INSERT INTO {table} ({table_columns}) VALUES ({table_values});"
+            sql_command = f"INSERT INTO {((schema + '.') if schema else '' ) + table} ({table_columns}) VALUES ({table_values});"
 
             def return_none_if_empty_string(
                 x): return None if x == "" or x == None else x
@@ -133,11 +135,11 @@ class DumpUtil():
             DumpUtil.dump_from_sql(file_path, params)
 
     @staticmethod
-    def dump_csv_if_exists(file_path: str, table: str, params: dict = {}):
+    def dump_csv_if_exists(file_path: str, schema: str, table: str, params: dict = {}):
         file_path = file_path if file_path[-4:
                                            ] == ".csv" else f"{file_path}.csv"
         if pathlib.Path(f"{file_path}").is_file():
-            DumpUtil.dump_from_csv(file_path, table, params)
+            DumpUtil.dump_from_csv(file_path, schema, table, params)
 
     @staticmethod
     def load_json(file_path: str) -> dict:
