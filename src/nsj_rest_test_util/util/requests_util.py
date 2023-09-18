@@ -1,9 +1,7 @@
-import json
-import os
-
 import requests
 
 from nsj_rest_test_util.util.enum_param_mode import ParamMode
+
 
 class RequestsUtil():
 
@@ -20,7 +18,7 @@ class RequestsUtil():
 
     @staticmethod
     def delete(url, params: dict = None, headers: dict = {},
-            param_mode: ParamMode = ParamMode.QUERY) -> requests.Response:
+               param_mode: ParamMode = ParamMode.QUERY) -> requests.Response:
 
         if param_mode == ParamMode.PATH:
             for field, value in params.items():
@@ -30,10 +28,10 @@ class RequestsUtil():
         return requests.delete(url=url, params=params, headers=headers)
 
     @staticmethod
-    def post(url, data: dict = None, params: dict = None, headers: dict = {}) -> requests.Response:
+    def post(url, data: dict = None, headers: dict = {}) -> requests.Response:
 
         retorno = requests.post(
-            url=url, json=data, headers=headers, params=params)
+            url=url, json=data, headers=headers)
         return retorno
 
     @staticmethod
@@ -43,10 +41,12 @@ class RequestsUtil():
             url=url, data=data, headers=headers)
         return retorno
 
-
     @staticmethod
-    def put(url, data: dict = None, params: dict = None, headers: dict = {}) -> requests.Response:
+    def put(url, data: dict = None, headers: dict = {}) -> requests.Response:
+
+        for field, value in data.items():
+            url = url.replace(f"<{field}>", f"{value}")
 
         retorno = requests.put(
-            url=url, json=data, headers=headers, params=params)
+            url=url, json=data, headers=headers)
         return retorno
