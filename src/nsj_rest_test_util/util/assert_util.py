@@ -6,7 +6,7 @@ class AssertUtil:
     @staticmethod
     def assert_status_code(response, expected_status_code):
         assert response.status_code == expected_status_code, \
-            f"Expected status {expected_status_code}, but received {response.status_code}"
+            f"Expected status {expected_status_code}, but received {response.status_code}. Return Text: {response.text}."
 
     @staticmethod
     def assert_is_instance(content, expected_type): 
