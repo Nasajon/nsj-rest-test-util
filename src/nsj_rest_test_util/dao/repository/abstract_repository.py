@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Dict, List, Optional
 from uuid import UUID
 
-from nsj_rest_test_util.dao.db_pool_config import db_pool
+from nsj_rest_test_util.dao.db_pool_config import Pool
 from nsj_rest_test_util.util.cursor_util import CursorUtil
 from nsj_rest_test_util.util.globals_util import GlobalUtil
 from nsj_rest_test_util.util.json_util import JsonUtil
@@ -14,22 +14,37 @@ from sqlalchemy.engine.base import Connection
 
 
 class AbstractRepository:
-    def __init__(self):
+    
+    def __init__(self, database_host, database_port, database_name, database_user, database_pass):
         inicio = datetime.now()
-
+        
+                
         request = GlobalUtil.get_request()
         if "connection" in request.parametros:
-            self.__con = request.parametros["connection"]
+            self.__con: Connection = request.parametros["connection"]
+            if request.parametros['invalid']:
+                self.__con.close()
+                self.set_connection(database_host, database_port, database_name, database_user, database_pass)
+                request.parametros["connection"] = self.__con
         else:
-
-            self.__con: Connection = db_pool.connect()
+            self.__con: Connection = Pool(database_host=database_host, 
+                                          database_name=database_name, 
+                                          database_port=database_port, 
+                                          database_user=database_user,
+                                          database_pass=database_pass).db_pool.connect()
             self.__transaction = None
             request.parametros["connection"] = self.__con
+        
+        request.parametros['invalid'] = False
         GlobalUtil.profile_query(inicio, datetime.now(), "<construtor>", {}, [])
-
-    def set_connection(self, connection: str):
+        
+    def set_connection(self,database_host, database_port, database_name, database_user, database_pass):
         inicio = datetime.now()
-        self.__con = db_pool.connect()
+        self.__con =  Pool(database_host=database_host, 
+                            database_name=database_name, 
+                            database_port=database_port, 
+                            database_user=database_user,
+                            database_pass=database_pass).db_pool.connect()
         GlobalUtil.profile_query(inicio, datetime.now(), "<set_connection>", {}, [])
 
     def begin(self):

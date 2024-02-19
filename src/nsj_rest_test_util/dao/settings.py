@@ -1,9 +1,9 @@
 import os
 
-APP_NAME = os.environ['APP_NAME']
+APP_NAME = os.getenv('APP_NAME', '')
 
-DATABASE_HOST = os.environ['DATABASE_HOST']
-DATABASE_PASS = os.environ['DATABASE_PASS']
-DATABASE_PORT = os.environ['DATABASE_PORT']
-DATABASE_NAME = os.environ['DATABASE_NAME']
-DATABASE_USER = os.environ['DATABASE_USER']
+DATABASE_HOST = os.getenv('DATABASE_HOST', '')
+DATABASE_PASS = os.getenv('DATABASE_PASS', '')
+DATABASE_PORT = os.getenv('DATABASE_PORT', '')
+DATABASE_NAME = os.getenv('DATABASE_NAME', '')
+DATABASE_USER = os.getenv('DATABASE_USER', '')
