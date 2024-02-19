@@ -1,5 +1,4 @@
 import csv
-import json
 import os
 import pathlib
 from typing import List
@@ -20,9 +19,9 @@ class BackupUtil:
 
     @staticmethod
     def backup_table_to_csv(dest_file_path: str, table: str, tenant: int,
-                            repository: TestesRepository = TestesFactory.getTestesRepository()):
+                            repository: TestesRepository = TestesFactory.getTestesRepository(), schema = 'public'):
 
-        sql = f"SELECT * FROM {table} where tenant={tenant}"
+        sql = f"SELECT * FROM {schema}.{table} where tenant={tenant}"
 
         rows = repository.fetchAll(sql, {})
         for row in rows:
@@ -40,32 +39,35 @@ class BackupUtil:
                 writer.writerow(row)
 
     @staticmethod
-    def backup_tables_to_csv(dest_folder_path: str, tenant: int, tables: List = []):
+    def backup_tables_to_csv(dest_folder_path: str, tenant: int, tables: List = [], schema = 'public'):
 
         DumpUtil.mkdir(dest_folder_path, parents=True)
 
         if not tables:
             return
-
+        
         repository = TestesFactory.getTestesRepository()
 
         for table in tables:
-            if table not in ['django_migrations', 'usuarios', 'registros_requisicoes', 'rastros']:
+            if table not in ['django_migrations', 'usuarios', 'registros_requisicoes', 'rastros', 'rastrosequenciamento']:
                 BackupUtil.backup_table_to_csv(
-                    f"{dest_folder_path}/{table}.csv", table, tenant, repository)
+                    f"{dest_folder_path}/{schema}.{table}.csv", table, tenant, repository, schema)
 
     # TODO Aplicar recurso para qualquer
     @staticmethod
-    def backup_database_to_csv(dest_folder_path: str, tenant: int):
+    def backup_database_to_csv(dest_folder_path: str, tenant: int, schema : str):
         repository = TestesFactory.getTestesRepository() 
-        response = repository.fetchAll("select tablename from pg_catalog.pg_tables where schemaname = 'public';", {})
+        
+        if schema == '':
+            schema = 'public'
+        response = repository.fetchAll(f"select tablename from pg_catalog.pg_tables where schemaname = '{schema}';", {})
 
 
-        ignore_tables = ["vw_timeserver", "registros_requisicoes"]
+        ignore_tables = ["vw_timeserver", "registros_requisicoes", "scriptshashes", "scriptsversoes", "rastrosequenciamento"]
 
         tables = [val['tablename']for val in response  if val["tablename"] not in ignore_tables]
 
-        BackupUtil.backup_tables_to_csv(dest_folder_path, tenant, tables)
+        BackupUtil.backup_tables_to_csv(dest_folder_path, tenant, tables, schema)
 
     @staticmethod
     def get_csvs_changes(csv_a_path: str, csv_b_path: str, csv_c_path: str):
