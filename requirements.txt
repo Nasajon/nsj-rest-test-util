@@ -14,7 +14,6 @@ itsdangerous==2.1.2
 Jinja2==3.1.2
 jsonpickle==2.2.0
 MarkupSafe==2.1.1
-mkdir==2020.12.3
 nsj-gcf-utils>=1.0.9
 packaging==21.3
 pendulum==2.1.2
@@ -36,6 +35,4 @@ sqlparams==3.0.0
 tomli==2.0.1
 typing_extensions==4.3.0
 urllib3==1.26.12
-values==2020.12.3
 Werkzeug==2.2.2
-write==2020.12.3

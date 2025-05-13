@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-from write import write
-
 from nsj_rest_test_util.util.json_util import JsonUtil
 from nsj_rest_test_util.util import backup_util
 from nsj_rest_test_util.util.enum_http_method import HTTPMethod
@@ -13,6 +11,11 @@ from nsj_rest_test_util.util.tcase_util import TCaseUtil
 def delete_all_files_in_folder(folder: Path):
     for file in folder.iterdir():
         file.unlink()
+
+def write_mkdirs(path: str, content: str):
+    os.makedirs(path, exist_ok=True)
+    with open(path, "w") as f:
+        f.write(content)
 
 
 class TCaseTools:
@@ -65,7 +68,7 @@ class TCaseTools:
             arq_entrada.unlink()
         if arq_saida.exists():
             arq_saida.unlink()
-        write(arq_entrada, JsonUtil().encode(dict_entrada_ou_parametros_get))
+        write_mkdirs(arq_entrada, JsonUtil().encode(dict_entrada_ou_parametros_get))
 
         print("Criando Dump em CSV")
         if pasta_csv.exists():
@@ -87,9 +90,9 @@ class TCaseTools:
         if script.exists():
             if sobrescrever_script:
                 script.unlink()
-                write(str(script), template)
+                write_mkdirs(str(script), template)
         else:
-            write(str(script), template)
+            write_mkdirs(str(script), template)
         
         # Gerar SQLs que limpam o banco
         if not utilizar_sql_global:
@@ -99,8 +102,8 @@ class TCaseTools:
                 texto_sql += f" \r\ndelete from {nome} where tenant=:tenant;";
             arquivo_sql = Path(str(pasta_sql) + f"/{nome_arq}.sql")
             arquivo_sql_after = Path(str(pasta_sql) + f"/{nome_arq}_after.sql")
-            write(str(arquivo_sql), texto_sql)
-            write(str(arquivo_sql_after), texto_sql)
+            write_mkdirs(str(arquivo_sql), texto_sql)
+            write_mkdirs(str(arquivo_sql_after), texto_sql)
             
 
         if executar_e_gerar_saida:
@@ -115,7 +118,7 @@ class TCaseTools:
                 saida = RequestsUtil.delete(test_util.endpoint, params=dict_entrada_ou_parametros_get)
 
             print(saida.content)
-            write(str(arq_saida), saida.content)
+            write_mkdirs(str(arq_saida), saida.content)
 
 
 if __name__ == '__main__':

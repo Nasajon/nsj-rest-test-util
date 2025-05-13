@@ -1,6 +1,6 @@
 install_to_pkg:
-	pip install build
-	pip install twine
+	pip install build==1.2.2.post1
+	pip install twine==4.0.0
 
 build_pkg:
 	python3 -m build
